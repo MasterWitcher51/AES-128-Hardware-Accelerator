@@ -1,4 +1,4 @@
-
+# Test script for Hello World Application
 set bit_file "C:/Users/adamo/Downloads/TutorialWorkspace/TutorialTest/export/TutorialTest/hw/sdt/design_1_wrapper.bit"
 set elf_file "C:/Users/adamo/Downloads/TutorialWorkspace/hello_world/build/hello_world.elf"
 set psinit   "C:/Users/adamo/Downloads/TutorialWorkspace/TutorialTest/hw/sdt/ps7_init.tcl"
