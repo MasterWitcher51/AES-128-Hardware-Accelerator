@@ -21,7 +21,7 @@ module AES_AXI_Core_master_stream_v1_0_M00_AXIS #
     localparam IDLE = 1'b0, SEND = 1'b1;
     reg         state;
     reg [1:0]   word_cnt;
-    reg [127:0] data_latch;
+    reg [127:0] data_reg;
 
     assign M_AXIS_TVALID = (state == SEND);
     assign M_AXIS_TSTRB  = 4'b1111;
@@ -30,23 +30,23 @@ module AES_AXI_Core_master_stream_v1_0_M00_AXIS #
     // System is busy if sending or if data just arrived
     assign o_m_axis_busy = (state == SEND);
     // Ciphertext is sent in 4 words
-    assign M_AXIS_TDATA = (word_cnt == 2'b00) ? data_latch[127:96] :
-                          (word_cnt == 2'b01) ? data_latch[95:64]  :
-                          (word_cnt == 2'b10) ? data_latch[63:32]  :
-                                                data_latch[31:0];
+    assign M_AXIS_TDATA = (word_cnt == 2'b00) ? data_reg[127:96] :
+                          (word_cnt == 2'b01) ? data_reg[95:64]  :
+                          (word_cnt == 2'b10) ? data_reg[63:32]  :
+                                                data_reg[31:0];
 
     always @(posedge M_AXIS_ACLK) begin
         if (!M_AXIS_ARESETN) begin
             state      <= IDLE;
             word_cnt   <= 2'b00;
-            data_latch <= 128'h0;
+            data_reg <= 128'h0;
         end 
         else begin
             case (state)
                 IDLE: begin
                     if (i_aes_done) begin
-                    // Latches full 128-bit ciphertext
-                        data_latch <= i_aes_ciphertext;
+                    // Retrieves full 128-bit ciphertext
+                        data_reg <= i_aes_ciphertext;
                         state      <= SEND;
                         word_cnt   <= 2'b00;
                     end
